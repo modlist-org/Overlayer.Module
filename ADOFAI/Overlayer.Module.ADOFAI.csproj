@@ -9,9 +9,9 @@
         <LangVersion>latest</LangVersion>
     </PropertyGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="../../Overlayer-v5/Overlayer/Overlayer.csproj" />
-    </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="../../Overlayer/Overlayer/Overlayer.csproj" />
+	</ItemGroup>
 
     <ItemGroup>
         <Reference Include="0Harmony">

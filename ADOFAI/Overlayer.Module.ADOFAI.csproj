@@ -8,12 +8,11 @@
         <AssemblyName>Overlayer.Module.ADOFAI</AssemblyName>
         <LangVersion>latest</LangVersion>
     </PropertyGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="../../Overlayer/Overlayer/Overlayer.csproj" />
-	</ItemGroup>
-
+	
     <ItemGroup>
+		<Reference Include="Overlayer">
+			<HintPath>../../Overlayer/Overlayer/bin/Release_ML/netstandard2.1/Overlayer.dll</HintPath>
+		</Reference>
         <Reference Include="0Harmony">
             <HintPath>$(GamePath)/MelonLoader/net35/0Harmony.dll</HintPath>
         </Reference>

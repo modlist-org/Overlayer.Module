@@ -17,7 +17,7 @@ namespace Overlayer.Module.ADOFAI;
 
 public class Core : OverlayerModule {
     public static Assembly Assembly { get; } = Assembly.GetExecutingAssembly();
-    public static OverlayerLogger Logger { get; } = new (MainCore.Host.OverlayerLogger, "ADOFAI Module");
+    public static OverlayerLogger Logger { get; } = new(MainCore.Host.OverlayerLogger, "ADOFAI Module");
     public static SettingsFile<ADOFAISettings> ConfigFile { get; } = new(Path.Combine(MainCore.Paths.ModulePath, "ADOFAI/Settings.json"));
     public static ADOFAISettings Config => ConfigFile.Data;
     public static Translator Tr { get; private set; } = new();

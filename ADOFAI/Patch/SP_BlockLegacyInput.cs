@@ -11,7 +11,7 @@ public class SP_BlockLegacyInput() : SafeConditionalPatch(nameof(SP_BlockLegacyI
     protected override bool ShouldApply() => true;
 
     protected override MethodBase GetTargetMethod()
-        => SafePatch.GetMethodSafe("RDInputType_Keyboard", "CheckKeyState");
+        => SafePatch.GetMethodSafe("RDInputType_Keyboard", "CheckKeyState", allowStatic: true);
 
     protected override HarmonyMethod Prefix() => new HarmonyMethod(typeof(SP_BlockLegacyInput)
         .GetMethod(nameof(PrefixImpl), BindingFlags.Static | BindingFlags.NonPublic));

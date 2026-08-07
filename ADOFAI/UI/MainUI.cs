@@ -72,6 +72,37 @@ public class MainUI {
            .gameObject.AddComponent<TextLocalization>()
            .Init("ADOFAI", "ADOFAI", Core.Tr);
 
+        if(Application.platform == RuntimePlatform.LinuxPlayer) {
+            var tmpInputPatch = SafePatchController.Get<SP_LinuxTMPKeyInput>();
+            var legacyInputPatch = SafePatchController.Get<SP_LinuxLegacyKeyInput>();
+            UIToggle linuxTextInputToggle = GenerateUI.Toggle(
+                GenerateUI.Row(content.transform),
+                defSet.LinuxTextInputFix,
+                Core.Config.LinuxTextInputFix,
+                toggle => {
+                    Core.Config.LinuxTextInputFix = toggle;
+                    Core.ConfigFile.RequestSave();
+                    if(toggle) {
+                        tmpInputPatch.Apply();
+                        legacyInputPatch.Apply();
+                    } else {
+                        tmpInputPatch.Remove();
+                        legacyInputPatch.Remove();
+                    }
+                },
+                "Linux Text Input Fix",
+                "linux_text_input_fix"
+            );
+            linuxTextInputToggle.OnlyModOn = true;
+            linuxTextInputToggle.Label.gameObject.AddComponent<TextLocalization>().Init("LINUX_TEXT_INPUT_FIX", "Linux Text Input Fix", Core.Tr);
+            objects[linuxTextInputToggle.Id] = linuxTextInputToggle;
+            linuxTextInputToggle.Rect.AddToolTip(
+                "DESC_LINUX_TEXT_INPUT_FIX",
+                "Fixes duplicate characters and Shift-modified text input on Linux",
+                Core.Tr
+            );
+        }
+
         var spSaj = SafePatchController.Get<SP_ShowAutoJudgment>();
         UIToggle showAutoJudgmentToggle = GenerateUI.Toggle(
             GenerateUI.Row(content.transform),

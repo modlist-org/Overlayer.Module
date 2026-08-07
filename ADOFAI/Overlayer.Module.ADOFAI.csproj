@@ -7,11 +7,12 @@
         <NeutralLanguage>en-US</NeutralLanguage>
         <AssemblyName>Overlayer.Module.ADOFAI</AssemblyName>
         <LangVersion>latest</LangVersion>
+        <OverlayerPath Condition="'$(OverlayerPath)' == ''">../../Overlayer/Overlayer</OverlayerPath>
     </PropertyGroup>
 	
     <ItemGroup>
 		<Reference Include="Overlayer">
-			<HintPath>../../Overlayer/Overlayer/bin/Release_ML/netstandard2.1/Overlayer.dll</HintPath>
+			<HintPath>$(OverlayerPath)/bin/Release_ML/netstandard2.1/Overlayer.dll</HintPath>
 		</Reference>
         <Reference Include="0Harmony">
             <HintPath>$(GamePath)/MelonLoader/net35/0Harmony.dll</HintPath>
@@ -403,7 +404,7 @@
 		<EmbeddedResource Include="Resource\Embedded\**\*" />
 	</ItemGroup>
 
-	<Target Name="PostBuild" AfterTargets="Build">
+	<Target Name="PostBuild" AfterTargets="Build" Condition="'$(SkipPostBuild)' != 'true'">
         <MakeDir Directories="$(GamePath)/UserLibs" Condition="'$(TargetPath)' != ''" />
         <Copy Condition="'$(TargetPath)' != ''" SourceFiles="$(TargetPath)" DestinationFolder="$(GamePath)/UserLibs" SkipUnchangedFiles="true" />
 

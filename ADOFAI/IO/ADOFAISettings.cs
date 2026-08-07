@@ -5,14 +5,19 @@ namespace Overlayer.Module.ADOFAI.IO;
 
 public sealed class ADOFAISettings : ISettingsFile {
     public bool ShowAutoplayJudgment = false;
+    public bool LinuxTextInputFix = true;
 
     public JToken Serialize() {
         return new JObject {
-            [nameof(ShowAutoplayJudgment)] = ShowAutoplayJudgment
+            [nameof(ShowAutoplayJudgment)] = ShowAutoplayJudgment,
+            [nameof(LinuxTextInputFix)] = LinuxTextInputFix
         };
     }
 
-    public void Deserialize(JToken token) => ShowAutoplayJudgment = Read(token, nameof(ShowAutoplayJudgment), ShowAutoplayJudgment);
+    public void Deserialize(JToken token) {
+        ShowAutoplayJudgment = Read(token, nameof(ShowAutoplayJudgment), ShowAutoplayJudgment);
+        LinuxTextInputFix = Read(token, nameof(LinuxTextInputFix), LinuxTextInputFix);
+    }
 
     private static T? Read<T>(JToken token, string key, T fallback) {
         var value = token[key];

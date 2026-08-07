@@ -7,6 +7,8 @@
     ],
     "ADOFAI": "얼불춤",
     "DESC_SHOW_AUTOPLAY_JUDGMENT": "자동 플레이에서도 입력 계기판에 실제 판정을 표시하도록 패치합니다",
-    "SHOW_AUTOPLAY_JUDGMENT": "자동 플레이 판정 표시"
+    "SHOW_AUTOPLAY_JUDGMENT": "자동 플레이 판정 표시",
+    "LINUX_TEXT_INPUT_FIX": "Linux 텍스트 입력 수정",
+    "DESC_LINUX_TEXT_INPUT_FIX": "Linux에서 문자 중복 입력과 Shift 조합 입력을 수정합니다"
   }
 }

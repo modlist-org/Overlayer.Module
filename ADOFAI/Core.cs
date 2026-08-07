@@ -42,6 +42,9 @@ public class Core : OverlayerModule {
 
         ConfigFile.Load();
 
+        SafePatchController.Add(new SP_BlockAsyncInput());
+        SafePatchController.Add(new SP_LinuxTMPKeyInput());
+        SafePatchController.Add(new SP_LinuxLegacyKeyInput());
         SafePatchController.Add(new SP_ShowAutoJudgment());
         SafePatchController.ApplyAll();
 

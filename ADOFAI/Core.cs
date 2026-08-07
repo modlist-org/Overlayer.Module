@@ -69,7 +69,6 @@ public class Core : OverlayerModule {
         });
 
         SafePatchController.Add(new SP_BlockAsyncInput());
-        SafePatchController.Add(new SP_BlockLegacyInput());
         SafePatchController.Add(new SP_LinuxTMPKeyInput());
         SafePatchController.Add(new SP_LinuxLegacyKeyInput());
         SafePatchController.Add(new SP_ShowAutoJudgment());

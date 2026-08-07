@@ -35,7 +35,6 @@ internal static class LinuxTextInputFix {
     }
 
     private static PendingKind pendingKind;
-    private static char pendingCharacter;
     private static int pendingFrame = -1;
     private static object? pendingSource;
 
@@ -43,14 +42,13 @@ internal static class LinuxTextInputFix {
         if(pendingFrame != Time.frameCount || !ReferenceEquals(pendingSource, source)) ClearPending();
 
         if(evt.keyCode == KeyCode.None && IsAsciiText(evt.character)) {
-            bool duplicate = pendingKind == PendingKind.Physical && pendingCharacter == evt.character;
+            bool duplicate = pendingKind == PendingKind.Physical;
             if(duplicate) {
                 ClearPending();
                 return false;
             }
 
             pendingKind = PendingKind.Text;
-            pendingCharacter = evt.character;
             pendingFrame = Time.frameCount;
             pendingSource = source;
             return true;
@@ -60,13 +58,11 @@ internal static class LinuxTextInputFix {
             if(evt.keyCode != KeyCode.None && IsAsciiText(evt.character) &&
                (evt.modifiers & (EventModifiers.Control | EventModifiers.Alt | EventModifiers.Command)) == 0) {
                 if(pendingKind == PendingKind.Text) {
-                    evt.character = '\0';
                     ClearPending();
-                    return true;
+                    return false;
                 }
 
                 pendingKind = PendingKind.Physical;
-                pendingCharacter = evt.character;
                 pendingFrame = Time.frameCount;
                 pendingSource = source;
                 return true;
@@ -76,18 +72,16 @@ internal static class LinuxTextInputFix {
             return true;
         }
 
-        // Text event carries layout-resolved character; physical event may lose Shift state.
+        // Keep whichever half of the paired text/physical event arrived first.
         if(pendingKind == PendingKind.Text) {
-            evt.character = '\0';
             ClearPending();
-            return true;
+            return false;
         }
 
         evt.character = value;
         evt.modifiers &= ~EventModifiers.FunctionKey;
 
         pendingKind = PendingKind.Physical;
-        pendingCharacter = value;
         pendingFrame = Time.frameCount;
         pendingSource = source;
         return true;
@@ -95,7 +89,6 @@ internal static class LinuxTextInputFix {
 
     private static void ClearPending() {
         pendingKind = PendingKind.None;
-        pendingCharacter = '\0';
         pendingFrame = -1;
         pendingSource = null;
     }

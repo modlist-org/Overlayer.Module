@@ -14,6 +14,20 @@ using UnityEngine.UI;
 namespace Overlayer.Module.ADOFAI.UI;
 
 public class MainUI {
+    public static void CreateInputBlocker(Transform parent) {
+        GameObject blocker = new("ADOFAI Input Blocker");
+        blocker.transform.SetParent(parent, false);
+        blocker.transform.SetAsFirstSibling();
+
+        RectTransform rect = blocker.AddComponent<RectTransform>();
+        rect.anchorMin = Vector2.zero;
+        rect.anchorMax = Vector2.one;
+        rect.offsetMin = Vector2.zero;
+        rect.offsetMax = Vector2.zero;
+
+        blocker.AddComponent<EmptyGraphic>().raycastTarget = true;
+    }
+
     public static void CreateMenu(RectTransform parent)
         => MenuFactory.CreateItem(parent, "ADOFAI", Core.Spr.Get("Image.ADOFAI.png"), 100)
         .label.gameObject.AddComponent<TextLocalization>().Init("ADOFAI", "ADOFAI", Core.Tr);

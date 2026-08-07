@@ -50,6 +50,21 @@ public static class Judgment {
     [Tag] public static int CVL => CurrentCount(HitMargin.VeryLate);
     [Tag] public static int CTL => CurrentCount(HitMargin.TooLate);
 
+    [Tag(Desc = "Official too early judgments.")] public static int OTE => CurrentCount(HitMargin.TooEarly);
+    [Tag(Desc = "Official very early judgments.")] public static int OVE => CurrentCount(HitMargin.VeryEarly);
+    [Tag(Desc = "Official early perfect judgments.")] public static int OEP => CurrentCount(HitMargin.EarlyPerfect);
+    [Tag(Desc = "Official perfect judgments.")] public static int OP => OPP + OA;
+    [Tag(Desc = "Official late perfect judgments.")] public static int OLP => CurrentCount(HitMargin.LatePerfect);
+    [Tag(Desc = "Official very late judgments.")] public static int OVL => CurrentCount(HitMargin.VeryLate);
+    [Tag(Desc = "Official too late judgments.")] public static int OTL => CurrentCount(HitMargin.TooLate);
+    [Tag(Desc = "Official autoplay perfect judgments.")] public static int OA => CurrentCount(HitMargin.Auto);
+    [Tag(Desc = "Official player perfect judgments.")] public static int OPP => CurrentCount(HitMargin.Perfect);
+    [Tag(Desc = "Fast official judgments.")] public static int OFast => OTE + OVE + OEP;
+    [Tag(Desc = "Slow official judgments.")] public static int OSlow => OLP + OVL + OTL;
+    [Tag(Desc = "Official early and late perfect judgments.")] public static int OELP => OEP + OLP;
+    [Tag(Desc = "Official very early and very late judgments.")] public static int OV => OVE + OVL;
+    [Tag(Desc = "Official too early and too late judgments.")] public static int OT => OTE + OTL;
+
     [Tag] public static int LFast => LTE + LVE + LEP;
     [Tag] public static int NFast => NTE + NVE + NEP;
     [Tag] public static int SFast => STE + SVE + SEP;

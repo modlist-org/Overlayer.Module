@@ -17,9 +17,6 @@ public static class Gameplay {
     [Tag] public static double Accuracy => Percent(Tracker?.percentAcc);
     [Tag] public static double XAccuracy => Percent(Tracker?.percentXAcc);
 
-    [Tag] public static int LScore => Score(JudgmentState.Values(global::Difficulty.Lenient));
-    [Tag] public static int NScore => Score(JudgmentState.Values(global::Difficulty.Normal));
-    [Tag] public static int SScore => Score(JudgmentState.Values(global::Difficulty.Strict));
     public static int ScoreValue => Score(Tracker?.hitMargins);
     [Tag(Name = "Score")] public static int ScoreTag => ScoreValue;
 

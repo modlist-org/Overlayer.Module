@@ -78,9 +78,7 @@ public class Core : OverlayerModule {
         SafePatchController.Add(new SP_LinuxTMPKeyInput());
         SafePatchController.Add(new SP_LinuxLegacyKeyInput());
         SafePatchController.Add(new SP_ShowAutoJudgment());
-        SafePatchController.Add(new SP_RecordJudgment());
         SafePatchController.Add(new SP_ResetTagState());
-        SafePatchController.Add(new SP_RevertTagState());
         SafePatchController.Add(new SP_RecordTiming());
         SafePatchController.ApplyAll();
 

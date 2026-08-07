@@ -1,86 +1,28 @@
 using Overlayer.Tag.Core;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Overlayer.Module.ADOFAI.Tag;
 
 public static class Judgment {
     private static scrMarginTracker? Tracker => scrController.instance?.playerOne?.marginTracker;
-    private static HitMargin CurrentHit => Tracker?.hitMargins.LastOrDefault() ?? HitMargin.Perfect;
 
-    [Tag(Desc = "Current lenient judgment.")] public static string LHit => Localized(JudgmentState.Last(Difficulty.Lenient));
-    [Tag(Desc = "Current normal judgment.")] public static string NHit => Localized(JudgmentState.Last(Difficulty.Normal));
-    [Tag(Desc = "Current strict judgment.")] public static string SHit => Localized(JudgmentState.Last(Difficulty.Strict));
-    [Tag(Desc = "Current judgment.")] public static string CHit => Localized(CurrentHit);
-    [Tag(Desc = "Current lenient judgment, independent of game language.")] public static string LHitRaw => JudgmentState.Last(Difficulty.Lenient).ToString();
-    [Tag(Desc = "Current normal judgment, independent of game language.")] public static string NHitRaw => JudgmentState.Last(Difficulty.Normal).ToString();
-    [Tag(Desc = "Current strict judgment, independent of game language.")] public static string SHitRaw => JudgmentState.Last(Difficulty.Strict).ToString();
-    [Tag(Desc = "Current judgment, independent of game language.")] public static string CHitRaw => CurrentHit.ToString();
+    [Tag(Desc = "Too early judgments.")] public static int TE => CurrentCount(HitMargin.TooEarly);
+    [Tag(Desc = "Very early judgments.")] public static int VE => CurrentCount(HitMargin.VeryEarly);
+    [Tag(Desc = "Early perfect judgments.")] public static int EP => CurrentCount(HitMargin.EarlyPerfect);
+    [Tag(Desc = "Perfect judgments.")] public static int P => PP + A;
+    [Tag(Desc = "Late perfect judgments.")] public static int LP => CurrentCount(HitMargin.LatePerfect);
+    [Tag(Desc = "Very late judgments.")] public static int VL => CurrentCount(HitMargin.VeryLate);
+    [Tag(Desc = "Too late judgments.")] public static int TL => CurrentCount(HitMargin.TooLate);
+    [Tag(Desc = "Autoplay perfect judgments.")] public static int A => CurrentCount(HitMargin.Auto);
+    [Tag(Desc = "Player perfect judgments.")] public static int PP => CurrentCount(HitMargin.Perfect);
+    [Tag(Desc = "Fast judgments.")] public static int Fast => TE + VE + EP;
+    [Tag(Desc = "Slow judgments.")] public static int Slow => LP + VL + TL;
+    [Tag(Desc = "Early and late perfect judgments.")] public static int ELP => EP + LP;
+    [Tag(Desc = "Very early and very late judgments.")] public static int V => VE + VL;
+    [Tag(Desc = "Too early and too late judgments.")] public static int T => TE + TL;
 
-    [Tag] public static int LTE => Count(Difficulty.Lenient, HitMargin.TooEarly);
-    [Tag] public static int LVE => Count(Difficulty.Lenient, HitMargin.VeryEarly);
-    [Tag] public static int LEP => Count(Difficulty.Lenient, HitMargin.EarlyPerfect);
-    [Tag] public static int LP => Count(Difficulty.Lenient, HitMargin.Perfect);
-    [Tag] public static int LLP => Count(Difficulty.Lenient, HitMargin.LatePerfect);
-    [Tag] public static int LVL => Count(Difficulty.Lenient, HitMargin.VeryLate);
-    [Tag] public static int LTL => Count(Difficulty.Lenient, HitMargin.TooLate);
-
-    [Tag] public static int NTE => Count(Difficulty.Normal, HitMargin.TooEarly);
-    [Tag] public static int NVE => Count(Difficulty.Normal, HitMargin.VeryEarly);
-    [Tag] public static int NEP => Count(Difficulty.Normal, HitMargin.EarlyPerfect);
-    [Tag] public static int NP => Count(Difficulty.Normal, HitMargin.Perfect);
-    [Tag] public static int NLP => Count(Difficulty.Normal, HitMargin.LatePerfect);
-    [Tag] public static int NVL => Count(Difficulty.Normal, HitMargin.VeryLate);
-    [Tag] public static int NTL => Count(Difficulty.Normal, HitMargin.TooLate);
-
-    [Tag] public static int STE => Count(Difficulty.Strict, HitMargin.TooEarly);
-    [Tag] public static int SVE => Count(Difficulty.Strict, HitMargin.VeryEarly);
-    [Tag] public static int SEP => Count(Difficulty.Strict, HitMargin.EarlyPerfect);
-    [Tag] public static int SP => Count(Difficulty.Strict, HitMargin.Perfect);
-    [Tag] public static int SLP => Count(Difficulty.Strict, HitMargin.LatePerfect);
-    [Tag] public static int SVL => Count(Difficulty.Strict, HitMargin.VeryLate);
-    [Tag] public static int STL => Count(Difficulty.Strict, HitMargin.TooLate);
-
-    [Tag] public static int CTE => CurrentCount(HitMargin.TooEarly);
-    [Tag] public static int CVE => CurrentCount(HitMargin.VeryEarly);
-    [Tag] public static int CEP => CurrentCount(HitMargin.EarlyPerfect);
-    [Tag] public static int CP => CurrentCount(HitMargin.Perfect) + CurrentCount(HitMargin.Auto);
-    [Tag] public static int CLP => CurrentCount(HitMargin.LatePerfect);
-    [Tag] public static int CVL => CurrentCount(HitMargin.VeryLate);
-    [Tag] public static int CTL => CurrentCount(HitMargin.TooLate);
-
-    [Tag(Desc = "Official too early judgments.")] public static int OTE => CurrentCount(HitMargin.TooEarly);
-    [Tag(Desc = "Official very early judgments.")] public static int OVE => CurrentCount(HitMargin.VeryEarly);
-    [Tag(Desc = "Official early perfect judgments.")] public static int OEP => CurrentCount(HitMargin.EarlyPerfect);
-    [Tag(Desc = "Official perfect judgments.")] public static int OP => OPP + OA;
-    [Tag(Desc = "Official late perfect judgments.")] public static int OLP => CurrentCount(HitMargin.LatePerfect);
-    [Tag(Desc = "Official very late judgments.")] public static int OVL => CurrentCount(HitMargin.VeryLate);
-    [Tag(Desc = "Official too late judgments.")] public static int OTL => CurrentCount(HitMargin.TooLate);
-    [Tag(Desc = "Official autoplay perfect judgments.")] public static int OA => CurrentCount(HitMargin.Auto);
-    [Tag(Desc = "Official player perfect judgments.")] public static int OPP => CurrentCount(HitMargin.Perfect);
-    [Tag(Desc = "Fast official judgments.")] public static int OFast => OTE + OVE + OEP;
-    [Tag(Desc = "Slow official judgments.")] public static int OSlow => OLP + OVL + OTL;
-    [Tag(Desc = "Official early and late perfect judgments.")] public static int OELP => OEP + OLP;
-    [Tag(Desc = "Official very early and very late judgments.")] public static int OV => OVE + OVL;
-    [Tag(Desc = "Official too early and too late judgments.")] public static int OT => OTE + OTL;
-
-    [Tag] public static int LFast => LTE + LVE + LEP;
-    [Tag] public static int NFast => NTE + NVE + NEP;
-    [Tag] public static int SFast => STE + SVE + SEP;
-    [Tag] public static int CFast => CTE + CVE + CEP;
-    [Tag] public static int LSlow => LLP + LVL + LTL;
-    [Tag] public static int NSlow => NLP + NVL + NTL;
-    [Tag] public static int SSlow => SLP + SVL + STL;
-    [Tag] public static int CSlow => CLP + CVL + CTL;
-
-    [Tag] public static int MissCount => CurrentCount(HitMargin.FailMiss);
-    [Tag] public static int Overloads => CurrentCount(HitMargin.FailOverload);
-    [Tag] public static int Multipress => CurrentCount(HitMargin.Multipress);
-
-    private static int Count(Difficulty difficulty, HitMargin margin) => JudgmentState.Count(difficulty, margin);
     private static int CurrentCount(HitMargin margin) => Tracker?.GetHits(margin) ?? 0;
-    private static string Localized(HitMargin margin) => RDString.Get($"HitMargin.{margin}");
 }
 
 public static class Combo {
@@ -120,62 +62,4 @@ public static class Combo {
     }
 
     private static bool IsPerfect(HitMargin margin) => margin is HitMargin.Perfect or HitMargin.Auto;
-}
-
-internal static class JudgmentState {
-    private static readonly List<HitMargin>[] margins = { new(), new(), new() };
-
-    internal static void Add(HitMargin lenient, HitMargin normal, HitMargin strict) {
-        margins[(int)Difficulty.Lenient].Add(lenient);
-        margins[(int)Difficulty.Normal].Add(normal);
-        margins[(int)Difficulty.Strict].Add(strict);
-    }
-
-    internal static void Reset() {
-        foreach(var values in margins) values.Clear();
-        GameplayState.Reset();
-    }
-
-    internal static void Trim(int count) {
-        foreach(var values in margins) {
-            if(values.Count > count) values.RemoveRange(count, values.Count - count);
-        }
-    }
-
-    internal static HitMargin Last(Difficulty difficulty) => margins[(int)difficulty].Count == 0
-        ? HitMargin.Perfect
-        : margins[(int)difficulty][^1];
-    internal static int Count(Difficulty difficulty, HitMargin margin) => margins[(int)difficulty].Count(value => value == margin);
-    internal static IReadOnlyList<HitMargin> Values(Difficulty difficulty) => margins[(int)difficulty];
-
-    internal static HitMargin Calculate(Difficulty difficulty, float hitAngle, float referenceAngle, bool clockwise,
-        float bpmTimesSpeed, float conductorPitch, double marginScale) {
-        float window = difficulty switch {
-            Difficulty.Lenient => 0.091f,
-            Difficulty.Strict => 0.04f,
-            _ => 0.065f
-        };
-        float speed = Math.Max(GCS.currentSpeedTrial, 0.0001f);
-        window = ADOBase.isMobile ? 0.09f : window / speed;
-        float perfectWindow = ADOBase.isMobile ? 0.07f : 0.03f / speed;
-        float pureWindow = ADOBase.isMobile ? 0.05f : 0.02f / speed;
-        window = Math.Max(window, 0.025f);
-        perfectWindow = Math.Max(perfectWindow, 0.025f);
-        pureWindow = Math.Max(pureWindow, 0.025f);
-
-        double counted = Math.Max(GCS.HITMARGIN_COUNTED * marginScale,
-            scrMisc.TimeToAngleInRad(window, bpmTimesSpeed, conductorPitch) * 180d / Math.PI);
-        double perfect = Math.Max(45d * marginScale,
-            scrMisc.TimeToAngleInRad(perfectWindow, bpmTimesSpeed, conductorPitch) * 180d / Math.PI);
-        double pure = Math.Max(30d * marginScale,
-            scrMisc.TimeToAngleInRad(pureWindow, bpmTimesSpeed, conductorPitch) * 180d / Math.PI);
-        double error = (hitAngle - referenceAngle) * (clockwise ? 1d : -1d) * 180d / Math.PI;
-
-        if(error < -counted) return HitMargin.TooEarly;
-        if(error < -perfect) return HitMargin.VeryEarly;
-        if(error < -pure) return HitMargin.EarlyPerfect;
-        if(error <= pure) return HitMargin.Perfect;
-        if(error <= perfect) return HitMargin.LatePerfect;
-        return error <= counted ? HitMargin.VeryLate : HitMargin.TooLate;
-    }
 }

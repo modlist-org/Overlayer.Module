@@ -59,7 +59,7 @@ internal static class LinuxTextInputFix {
         if(!TryGetCharacter(evt, out char value)) {
             if(evt.keyCode != KeyCode.None && IsAsciiText(evt.character) &&
                (evt.modifiers & (EventModifiers.Control | EventModifiers.Alt | EventModifiers.Command)) == 0) {
-                if(pendingKind == PendingKind.Text && pendingCharacter == evt.character) {
+                if(pendingKind == PendingKind.Text) {
                     evt.character = '\0';
                     ClearPending();
                     return true;
@@ -76,7 +76,8 @@ internal static class LinuxTextInputFix {
             return true;
         }
 
-        if(pendingKind == PendingKind.Text && pendingCharacter == value) {
+        // Text event carries layout-resolved character; physical event may lose Shift state.
+        if(pendingKind == PendingKind.Text) {
             evt.character = '\0';
             ClearPending();
             return true;

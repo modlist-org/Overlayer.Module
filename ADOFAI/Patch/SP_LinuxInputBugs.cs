@@ -14,7 +14,7 @@ public sealed class SP_LinuxTMPKeyInput() : SafeConditionalPatch(nameof(SP_Linux
         => typeof(TMP_InputField).GetMethod("KeyPressed", BindingFlags.Instance | BindingFlags.NonPublic)!;
     protected override HarmonyMethod Prefix()
         => new(typeof(SP_LinuxTMPKeyInput).GetMethod(nameof(PrefixImpl), BindingFlags.Static | BindingFlags.NonPublic));
-    private static bool PrefixImpl(Event evt, TMP_InputField __instance) => LinuxTextInputFix.Process(evt, __instance);
+    private static bool PrefixImpl(Event evt) => LinuxTextInputFix.Process(evt);
 }
 
 public sealed class SP_LinuxLegacyKeyInput() : SafeConditionalPatch(nameof(SP_LinuxLegacyKeyInput)) {
@@ -24,7 +24,7 @@ public sealed class SP_LinuxLegacyKeyInput() : SafeConditionalPatch(nameof(SP_Li
         => typeof(LegacyInputField).GetMethod("KeyPressed", BindingFlags.Instance | BindingFlags.NonPublic)!;
     protected override HarmonyMethod Prefix()
         => new(typeof(SP_LinuxLegacyKeyInput).GetMethod(nameof(PrefixImpl), BindingFlags.Static | BindingFlags.NonPublic));
-    private static bool PrefixImpl(Event evt, LegacyInputField __instance) => LinuxTextInputFix.Process(evt, __instance);
+    private static bool PrefixImpl(Event evt) => LinuxTextInputFix.Process(evt);
 }
 
 internal static class LinuxTextInputFix {
@@ -36,10 +36,11 @@ internal static class LinuxTextInputFix {
 
     private static PendingKind pendingKind;
     private static int pendingFrame = -1;
-    private static object? pendingSource;
+    private const int PendingLifetimeFrames = 1;
 
-    public static bool Process(Event evt, object source) {
-        if(pendingFrame != Time.frameCount || !ReferenceEquals(pendingSource, source)) ClearPending();
+    public static bool Process(Event evt) {
+        int pendingAge = Time.frameCount - pendingFrame;
+        if(pendingKind != PendingKind.None && (pendingAge < 0 || pendingAge > PendingLifetimeFrames)) ClearPending();
 
         if(evt.keyCode == KeyCode.None && IsAsciiText(evt.character)) {
             bool duplicate = pendingKind == PendingKind.Physical;
@@ -50,7 +51,6 @@ internal static class LinuxTextInputFix {
 
             pendingKind = PendingKind.Text;
             pendingFrame = Time.frameCount;
-            pendingSource = source;
             return true;
         }
 
@@ -64,9 +64,10 @@ internal static class LinuxTextInputFix {
 
                 pendingKind = PendingKind.Physical;
                 pendingFrame = Time.frameCount;
-                pendingSource = source;
                 return true;
             }
+
+            if(evt.keyCode == KeyCode.None || IsModifierKey(evt.keyCode)) return true;
 
             ClearPending();
             return true;
@@ -83,17 +84,22 @@ internal static class LinuxTextInputFix {
 
         pendingKind = PendingKind.Physical;
         pendingFrame = Time.frameCount;
-        pendingSource = source;
         return true;
     }
 
     private static void ClearPending() {
         pendingKind = PendingKind.None;
         pendingFrame = -1;
-        pendingSource = null;
     }
 
     private static bool IsAsciiText(char value) => value is >= ' ' and <= '~';
+
+    private static bool IsModifierKey(KeyCode key) => key is
+        KeyCode.LeftShift or KeyCode.RightShift or
+        KeyCode.LeftControl or KeyCode.RightControl or
+        KeyCode.LeftAlt or KeyCode.RightAlt or
+        KeyCode.LeftCommand or KeyCode.RightCommand or
+        KeyCode.CapsLock;
 
     private static bool TryGetCharacter(Event evt, out char value) {
         value = '\0';

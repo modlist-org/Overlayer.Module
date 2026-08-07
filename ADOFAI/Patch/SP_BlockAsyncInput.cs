@@ -1,6 +1,7 @@
 using HarmonyLib;
 using Overlayer.Patch.Safe;
 using Overlayer.UI;
+using Overlayer.UI.Objects;
 using System.Reflection;
 
 namespace Overlayer.Module.ADOFAI.Patch;
@@ -15,7 +16,7 @@ public class SP_BlockAsyncInput() : SafeConditionalPatch(nameof(SP_BlockAsyncInp
         .GetMethod(nameof(PrefixImpl), BindingFlags.Static | BindingFlags.NonPublic));
 
     private static bool PrefixImpl(ref bool __result) {
-        if(UICore.CanvasObj == null || !UICore.CanvasObj.activeInHierarchy) {
+        if(UICore.CanvasObj == null || !UICore.CanvasObj.activeInHierarchy || !UIInputBlocker.IsEditing) {
             return true;
         }
 

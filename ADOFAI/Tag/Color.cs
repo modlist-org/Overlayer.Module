@@ -27,9 +27,18 @@ public static class Color {
     [Tag(Desc = "\"Multipress\" Hex Color")]
     public const string MultipressHex = "00FFED";
 
+    [Tag(Desc = "Multipress Hex Color")]
+    public const string MPHex = MultipressHex;
+
     [Tag(Desc = "\"Miss...\" Hex Color")]
     public const string MissHex = "D958FF";
 
+    [Tag(Desc = "Miss Hex Color")]
+    public const string FMHex = MissHex;
+
     [Tag(Desc = "\"Overload...\" Hex Color")]
     public const string OverloadHex = "D958FF";
+
+    [Tag(Desc = "Overload Hex Color")]
+    public const string FOHex = OverloadHex;
 }

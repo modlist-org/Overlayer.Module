@@ -97,9 +97,3 @@ public static class Effects {
         return hex.Length is 3 or 4 or 6 or 8 && UnityEngine.ColorUtility.TryParseHtmlString("#" + hex, out color);
     }
 }
-
-public static class ExpressionTag {
-    [Tag(Name = "Expression", TagType = TagType.Advanced, Desc = "Evaluates a JavaScript expression.")]
-    public static Func<string> Expression(ParsedTag parsed, DiagnosticContext context, List<CompileDiagnostic> diagnostics)
-        => Overlayer.TagImpl.JavaScirpt.JSExpr(parsed, context, diagnostics);
-}

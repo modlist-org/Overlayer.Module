@@ -108,42 +108,6 @@ public static class Gameplay {
     }) ?? 0;
 }
 
-public static class Performance {
-    private static readonly Process process = Process.GetCurrentProcess();
-    private static DateTime lastCpuTime = DateTime.UtcNow;
-    private static TimeSpan lastProcessTime = process.TotalProcessorTime;
-    private static double cpuUsage;
-
-    [Tag] public static double FrameTime => UnityEngine.Time.unscaledDeltaTime * 1000d;
-    [Tag] public static double Fps => UnityEngine.Time.unscaledDeltaTime <= 0 ? 0 : 1d / UnityEngine.Time.unscaledDeltaTime;
-    [Tag] public static int ProcessorCount => SystemInfo.processorCount;
-    [Tag] public static double CpuUsage => SampleCpu();
-    [Tag] public static double TotalCpuUsage => 0;
-    [Tag] public static double MemoryUsageGBytes => process.WorkingSet64 / 1073741824d;
-    [Tag] public static double TotalMemoryUsageGBytes => 0;
-    [Tag] public static double MemoryUsage => SystemInfo.systemMemorySize <= 0 ? 0 : MemoryUsageGBytes * 102400d / SystemInfo.systemMemorySize;
-    [Tag] public static double TotalMemoryUsage => 0;
-    [Tag] public static double MemoryGBytes => SystemInfo.systemMemorySize / 1024d;
-
-    [Tag] public static double Days => DateTime.Now.TimeOfDay.TotalDays;
-    [Tag] public static double Hours => DateTime.Now.TimeOfDay.TotalHours;
-    [Tag] public static double Minutes => DateTime.Now.TimeOfDay.TotalMinutes;
-    [Tag] public static double Seconds => DateTime.Now.TimeOfDay.TotalSeconds;
-    [Tag] public static double MilliSeconds => DateTime.Now.TimeOfDay.TotalMilliseconds;
-    [Tag(Name = "MilliSecond")] public static int MilliSecondTag => DateTime.Now.Millisecond;
-
-    private static double SampleCpu() {
-        DateTime now = DateTime.UtcNow;
-        double elapsed = (now - lastCpuTime).TotalMilliseconds;
-        if(elapsed < 250) return cpuUsage;
-        TimeSpan current = process.TotalProcessorTime;
-        cpuUsage = Math.Max(0, Math.Min(100, (current - lastProcessTime).TotalMilliseconds * 100 / elapsed / Math.Max(1, Environment.ProcessorCount)));
-        lastCpuTime = now;
-        lastProcessTime = current;
-        return cpuUsage;
-    }
-}
-
 internal static class GameplayState {
     internal static double Timing;
     internal static double BestProgress;

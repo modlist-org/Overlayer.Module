@@ -16,7 +16,6 @@
         <Reference Include="Accessibility" HintPath="$(GamePath)/$(GameData)/Managed/Accessibility.dll" />
         <Reference Include="Assembly-CSharp-firstpass" HintPath="$(GamePath)/$(GameData)/Managed/Assembly-CSharp-firstpass.dll" />
         <Reference Include="Assembly-CSharp" HintPath="$(GamePath)/$(GameData)/Managed/Assembly-CSharp.dll" />
-        <Reference Include="com.rlabrecque.steamworks.net" HintPath="$(GamePath)/$(GameData)/Managed/com.rlabrecque.steamworks.net.dll" />
         <Reference Include="DemiLib" HintPath="$(GamePath)/$(GameData)/Managed/DemiLib.dll" />
         <Reference Include="DOTween" HintPath="$(GamePath)/$(GameData)/Managed/DOTween.dll" />
         <Reference Include="DOTweenPro" HintPath="$(GamePath)/$(GameData)/Managed/DOTweenPro.dll" />

@@ -6,9 +6,11 @@
       "OVERLAYER"
     ],
     "ADOFAI": "ADOFAI",
+    "DESC_HIDE_TITLE": "Hides in-game level titles using GCS setting",
+    "DESC_LINUX_TEXT_INPUT_FIX": "Fixes duplicate characters and Shift-modified text input on Linux",
     "DESC_SHOW_AUTOPLAY_JUDGMENT": "Applies a patch to show the true judgment in AutoPlay on the Hit Error Meter",
+    "HIDE_TITLE": "Hide Title",
     "SHOW_AUTOPLAY_JUDGMENT": "Show Autoplay Judgment",
-    "LINUX_TEXT_INPUT_FIX": "Linux Text Input Fix",
-    "DESC_LINUX_TEXT_INPUT_FIX": "Fixes duplicate characters and Shift-modified text input on Linux"
+    "LINUX_TEXT_INPUT_FIX": "Linux Text Input Fix"
   }
 }

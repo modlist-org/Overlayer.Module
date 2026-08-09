@@ -143,5 +143,26 @@ public class MainUI {
             "Applies a patch to show the true judgment in AutoPlay on the Hit Error Meter",
             Core.Tr
         );
+
+        UIToggle hideTitleToggle = GenerateUI.Toggle(
+            GenerateUI.Row(content.transform),
+            defSet.HideTitle,
+            Core.Config.HideTitle,
+            toggle => {
+                Core.Config.HideTitle = toggle;
+                Core.ConfigFile.RequestSave();
+                GCS.d_dontShowTitles = toggle;
+            },
+            "Hide Title",
+            "hide_title"
+        );
+        hideTitleToggle.OnlyModOn = true;
+        hideTitleToggle.Label.gameObject.AddComponent<TextLocalization>().Init("HIDE_TITLE", "Hide Title", Core.Tr);
+        objects[hideTitleToggle.Id] = hideTitleToggle;
+        hideTitleToggle.Rect.AddToolTip(
+            "DESC_HIDE_TITLE",
+            "Hides in-game level titles using GCS setting",
+            Core.Tr
+        );
     }
 }

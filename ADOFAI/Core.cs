@@ -75,6 +75,8 @@ public class Core : OverlayerModule {
             return defaultTextFont;
         });
 
+        GCS.d_dontShowTitles = Config.HideTitle;
+
         SafePatchController.Add(new SP_BlockAsyncInput());
         SafePatchController.Add(new SP_BlockLegacyInput());
         SafePatchController.Add(new SP_BlockInputMethod("OptionsPanelsCLS", "CheckInputs"));
@@ -95,6 +97,8 @@ public class Core : OverlayerModule {
     }
 
     public override void OnDispose() {
+        GCS.d_dontShowTitles = false;
+
         playbackStateRegistration?.Dispose();
         playbackStateRegistration = null;
         textFontRegistration?.Dispose();

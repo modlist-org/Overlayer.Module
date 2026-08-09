@@ -428,5 +428,14 @@ FodyWeavers.xsd
 *.msm
 *.msp
 
-# Overlayer
+#InteliJ
+.idea
+
+# Overlayer build settings
 Directory.Build.props
+
+# Overlayer language sync log files
+.ktl
+
+# Overlayer build output
+.build

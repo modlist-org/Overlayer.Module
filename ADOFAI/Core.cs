@@ -38,6 +38,14 @@ public class Core : OverlayerModule {
     private void OnLanguageChanged(string lang)
         => Tr.Language = lang;
 
+    public static bool IsPlaying {
+        get {
+            var ctrl = scrController.instance;
+            var cdt = scrConductor.instance;
+            return ctrl is not null && cdt is not null && !ctrl.paused && cdt.isGameWorld;
+        }
+    }
+
     public override void OnInitialize() {
         Tr.SetLog(Logger.Msg);
 
@@ -50,8 +58,7 @@ public class Core : OverlayerModule {
         ConfigFile.Load();
 
         playbackStateRegistration = PlaybackState.Register(() => {
-            scrController controller = ADOBase.controller;
-            return controller != null && controller.gameworld;
+            return IsPlaying;
         });
         textFontRegistration = TextFontProvider.Register(() => {
             if(defaultTextFont == null) {

@@ -6,6 +6,10 @@
       "OVERLAYER"
     ],
     "ADOFAI": "얼불춤",
+    "ADV_DESC_BLOCK_INPUT_WHEN_OPENED": "얼불춤의 입력 시스템을 4단계 계층으로 분리하여 차단합니다.\n\n1. 비동기 입력: scrPlayer.ValidInputWasTriggered를 패치하고 AsyncInputManager의 키 마스크 버퍼를 강제로 비웁니다.\n2. 레거시 입력: RDInputType_Keyboard.CheckKeyState를 패치하여 UI 편집 및 마우스 클릭 입력을 차단합니다.\n3. 입력 메서드: OptionsPanelsCLS.CheckInputs를 가로채 옵션 메뉴 입력을 억제합니다.\n4. 직접 입력: 레벨 선택 화면의 Update 메서드에 트랜스파일러를 적용하여 UnityEngine.Input 호출을 자체 래퍼로 우회합니다.\n\n추가로 UI 레이어 최하단에 전체 화면 마우스 레이캐스트 타겟(EmptyGraphic)을 배치하여 게임 배경 클릭을 방지합니다",
+    "ADV_DESC_HIDE_TITLE": "게임 메모리의 미사용 정적 플래그인\nGCS.d_dontShowTitles를 직접 제어합니다.\n\n얼불춤 내부에는 해당 플래그를 읽어\n레벨 제목 표시를 안 함으로 처리하는 로직은 있지만,\n게임 내 그 어디에서도 이 값을 할당해 주지 않는 미사용 필드로 남아있습니다.\n\n이 옵션은 해당 필드를 직접 조작할 수 있게 노출하여,\n별도의 패치 없이도 게임 내 원본 렌더링 로직으로 제목을 숨깁니다",
+    "ADV_DESC_LINUX_TEXT_INPUT_FIX": "리눅스 빌드에서 OS의 문자 입력 이벤트와 물리 키 이벤트가\n동시에 발생하여 입력이 중복 처리되는 현상을 방지합니다.\n\nProcess 메서드가 프레임 번호와 대기 상태를 추적하여\n쌍으로 들어오는 이벤트 중 먼저 도착한 하나만 통과시키고 중복을 차단합니다.\n\n또한 비트 연산으로 키 코드와 조합키 상태를 분석하여\nShift 및 CapsLock 입력 시 정확한 ASCII 문자로 재계산합니다",
+    "ADV_DESC_SHOW_AUTOPLAY_JUDGMENT": "Transpiler를 사용하여 scrPlayer.Hit 메서드를 수정합니다.\n\n기존 scrPlayer.Hit 메서드는 자동 플레이 중\n(this.auto) 입력 계기판에 실제 각도 오차 대신\n무조건 0.0f(퍼펙트) 값을 전달하도록 하드코딩되어 있습니다.\n트랜스파일러가 자동 플레이 필드/프로퍼티를 참조하는\n명령어(Ldarg_0 + Ldfld auto 또는 Call get_auto)를\n탐색하여, 해당 바이트코드를 거짓(Ldc_I4_0) 및\nNop으로 치환합니다.\n\n이를 통해 오토 검사를 항상 false로 우회시켜\n입력 계기판이 실제 오차 각도(angleDiff) 및\n타이밍 판정을 정상적으로 렌더링하도록 강제합니다",
     "BLOCK_INPUT_WHEN_OPENED": "메뉴 열림 시 입력 차단",
     "DESC_BLOCK_INPUT_WHEN_OPENED": "Overlayer UI가 열려있는 동안 게임 입력을 차단합니다",
     "DESC_HIDE_TITLE": "GCS 설정을 사용하여 게임 내 레벨 제목을 숨깁니다",

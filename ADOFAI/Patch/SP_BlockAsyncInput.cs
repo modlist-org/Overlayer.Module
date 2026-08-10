@@ -6,7 +6,7 @@ using System.Reflection;
 namespace Overlayer.Module.ADOFAI.Patch;
 
 public class SP_BlockAsyncInput() : SafeConditionalPatch(nameof(SP_BlockAsyncInput)) {
-    protected override bool ShouldApply() => true;
+    protected override bool ShouldApply() => Core.Config.BlockInputWhenOpened;
 
     protected override MethodBase GetTargetMethod()
         => SafePatch.GetMethodSafe("scrPlayer", "ValidInputWasTriggered");

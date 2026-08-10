@@ -13,7 +13,7 @@ using UnityEngine.UI;
 
 namespace Overlayer.Module.ADOFAI.UI;
 
-public class MainUI {
+public static class MainUI {
     public static void CreateInputBlocker(Transform parent) {
         GameObject blocker = new("ADOFAI Input Blocker");
         blocker.transform.SetParent(parent, false);
@@ -97,11 +97,11 @@ public class MainUI {
                     Core.Config.LinuxTextInputFix = toggle;
                     Core.ConfigFile.RequestSave();
                     if(toggle) {
-                        tmpInputPatch.Apply();
-                        legacyInputPatch.Apply();
+                        tmpInputPatch?.Apply();
+                        legacyInputPatch?.Apply();
                     } else {
-                        tmpInputPatch.Remove();
-                        legacyInputPatch.Remove();
+                        tmpInputPatch?.Remove();
+                        legacyInputPatch?.Remove();
                     }
                 },
                 "Linux Text Input Fix",
@@ -116,6 +116,41 @@ public class MainUI {
                 Core.Tr
             );
         }
+        
+        var blockInputPatches = new SafeConditionalPatch?[] {
+            SafePatchController.Get<SP_BlockAsyncInput>(),
+            SafePatchController.Get<SP_BlockLegacyInput>(),
+            SafePatchController.Get<SP_BlockInputMethod>(),
+            SafePatchController.Get<SP_BlockDirectInput>()
+        };
+
+        UIToggle blockInputToggle = GenerateUI.Toggle(
+            GenerateUI.Row(content.transform),
+            defSet.BlockInputWhenOpened,
+            Core.Config.BlockInputWhenOpened,
+            toggle => {
+                Core.Config.BlockInputWhenOpened = toggle;
+                Core.ConfigFile.RequestSave();
+
+                foreach (var patch in blockInputPatches) {
+                    if (patch is null) {
+                        continue;
+                    }
+                    if (toggle) patch.Apply();
+                    else patch.Remove();
+                }
+            },
+            "Block Input When Opened",
+            "block_input_when_opened"
+        );
+        blockInputToggle.OnlyModOn = true;
+        blockInputToggle.Label.gameObject.AddComponent<TextLocalization>().Init("BLOCK_INPUT_WHEN_OPENED", "Block Input When Opened", Core.Tr);
+        objects[blockInputToggle.Id] = blockInputToggle;
+        blockInputToggle.Rect.AddToolTip(
+            "DESC_BLOCK_INPUT_WHEN_OPENED",
+            "Blocks game inputs while the Overlayer UI is opened",
+            Core.Tr
+        );
 
         var spSaj = SafePatchController.Get<SP_ShowAutoJudgment>();
         UIToggle showAutoJudgmentToggle = GenerateUI.Toggle(
@@ -126,10 +161,10 @@ public class MainUI {
                 Core.Config.ShowAutoplayJudgment = toggle;
                 Core.ConfigFile.RequestSave();
 
-                if(toggle) {
-                    spSaj.Apply();
+                if (toggle) {
+                    spSaj?.Apply();
                 } else {
-                    spSaj.Remove();
+                    spSaj?.Remove();
                 }
             },
             "Show Autoplay Judgment",

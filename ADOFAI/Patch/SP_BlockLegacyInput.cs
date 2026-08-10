@@ -9,7 +9,7 @@ using UnityEngine;
 namespace Overlayer.Module.ADOFAI.Patch;
 
 public sealed class SP_BlockLegacyInput() : SafeConditionalPatch(nameof(SP_BlockLegacyInput)) {
-    protected override bool ShouldApply() => true;
+    protected override bool ShouldApply() => Core.Config.BlockInputWhenOpened;
 
     protected override MethodBase GetTargetMethod()
         => SafePatch.GetMethodSafe("RDInputType_Keyboard", "CheckKeyState", allowStatic: true);
@@ -29,7 +29,7 @@ public sealed class SP_BlockLegacyInput() : SafeConditionalPatch(nameof(SP_Block
 
 public sealed class SP_BlockInputMethod(string typeName, string methodName)
     : SafeConditionalPatch($"{nameof(SP_BlockInputMethod)}.{typeName}.{methodName}") {
-    protected override bool ShouldApply() => true;
+    protected override bool ShouldApply() => Core.Config.BlockInputWhenOpened;
     protected override MethodBase GetTargetMethod() => SafePatch.GetMethodSafe(typeName, methodName);
     protected override HarmonyMethod Prefix() => new(typeof(SP_BlockInputMethod)
         .GetMethod(nameof(PrefixImpl), BindingFlags.Static | BindingFlags.NonPublic));
@@ -38,7 +38,7 @@ public sealed class SP_BlockInputMethod(string typeName, string methodName)
 
 public sealed class SP_BlockDirectInput(string typeName, string methodName)
     : SafeConditionalPatch($"{nameof(SP_BlockDirectInput)}.{typeName}.{methodName}") {
-    protected override bool ShouldApply() => true;
+    protected override bool ShouldApply() => Core.Config.BlockInputWhenOpened;
     protected override MethodBase GetTargetMethod() => SafePatch.GetMethodSafe(typeName, methodName);
     protected override HarmonyMethod Transpiler() => new(typeof(SP_BlockDirectInput)
         .GetMethod(nameof(TranspilerImpl), BindingFlags.Static | BindingFlags.NonPublic));

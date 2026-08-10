@@ -7,18 +7,21 @@ public sealed class ADOFAISettings : ISettingsFile {
     public bool ShowAutoplayJudgment = false;
     public bool LinuxTextInputFix = true;
     public bool HideTitle = false;
+    public bool BlockInputWhenOpened = true;
 
     public JToken Serialize() {
         return new JObject {
             [nameof(ShowAutoplayJudgment)] = ShowAutoplayJudgment,
             [nameof(LinuxTextInputFix)] = LinuxTextInputFix,
-            [nameof(HideTitle)] = HideTitle
+            [nameof(HideTitle)] = HideTitle,
+            [nameof(BlockInputWhenOpened)] = BlockInputWhenOpened,
         };
     }
 
     public void Deserialize(JToken token) {
         ShowAutoplayJudgment = Read(token, nameof(ShowAutoplayJudgment), ShowAutoplayJudgment);
         LinuxTextInputFix = Read(token, nameof(LinuxTextInputFix), LinuxTextInputFix);
+        HideTitle = Read(token, nameof(HideTitle), HideTitle);
         HideTitle = Read(token, nameof(HideTitle), HideTitle);
     }
 

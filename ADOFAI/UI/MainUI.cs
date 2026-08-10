@@ -14,6 +14,8 @@ using UnityEngine.UI;
 namespace Overlayer.Module.ADOFAI.UI;
 
 public static class MainUI {
+    private static GameObject? _inputBlockerObject;
+
     public static void CreateInputBlocker(Transform parent) {
         GameObject blocker = new("ADOFAI Input Blocker");
         blocker.transform.SetParent(parent, false);
@@ -26,6 +28,9 @@ public static class MainUI {
         rect.offsetMax = Vector2.zero;
 
         blocker.AddComponent<EmptyGraphic>().raycastTarget = true;
+
+        _inputBlockerObject = blocker;
+        UpdateInputBlockerState(Core.Config.BlockInputWhenOpened);
     }
 
     public static void CreateMenu(RectTransform parent)
@@ -118,7 +123,7 @@ public static class MainUI {
             toggle => {
                 Core.Config.BlockInputWhenOpened = toggle;
                 Core.ConfigFile.RequestSave();
-
+                UpdateInputBlockerState(toggle);
                 ApplyState(SafePatchController.Get<SP_BlockAsyncInput>(), toggle);
                 ApplyState(SafePatchController.Get<SP_BlockLegacyInput>(), toggle);
                 ApplyState(SafePatchController.Get<SP_BlockInputMethod>(), toggle);
@@ -185,6 +190,12 @@ public static class MainUI {
                 if (enable) patch.Apply();
                 else patch.Remove();
             }
+        }
+    }
+
+    private static void UpdateInputBlockerState(bool enable) {
+        if (_inputBlockerObject != null) {
+            _inputBlockerObject.SetActive(enable);
         }
     }
 }

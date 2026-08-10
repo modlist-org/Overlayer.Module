@@ -86,9 +86,7 @@ public static class MainUI {
            .gameObject.AddComponent<TextLocalization>()
            .Init("ADOFAI", "ADOFAI", Core.Tr);
 
-        if(Application.platform == RuntimePlatform.LinuxPlayer) {
-            var tmpInputPatch = SafePatchController.Get<SP_LinuxTMPKeyInput>();
-            var legacyInputPatch = SafePatchController.Get<SP_LinuxLegacyKeyInput>();
+        if (Application.platform == RuntimePlatform.LinuxPlayer) {
             UIToggle linuxTextInputToggle = GenerateUI.Toggle(
                 GenerateUI.Row(content.transform),
                 defSet.LinuxTextInputFix,
@@ -96,13 +94,9 @@ public static class MainUI {
                 toggle => {
                     Core.Config.LinuxTextInputFix = toggle;
                     Core.ConfigFile.RequestSave();
-                    if(toggle) {
-                        tmpInputPatch?.Apply();
-                        legacyInputPatch?.Apply();
-                    } else {
-                        tmpInputPatch?.Remove();
-                        legacyInputPatch?.Remove();
-                    }
+
+                    ApplyState(SafePatchController.Get<SP_LinuxTMPKeyInput>(), toggle);
+                    ApplyState(SafePatchController.Get<SP_LinuxLegacyKeyInput>(), toggle);
                 },
                 "Linux Text Input Fix",
                 "linux_text_input_fix"
@@ -116,13 +110,6 @@ public static class MainUI {
                 Core.Tr
             );
         }
-        
-        var blockInputPatches = new SafeConditionalPatch?[] {
-            SafePatchController.Get<SP_BlockAsyncInput>(),
-            SafePatchController.Get<SP_BlockLegacyInput>(),
-            SafePatchController.Get<SP_BlockInputMethod>(),
-            SafePatchController.Get<SP_BlockDirectInput>()
-        };
 
         UIToggle blockInputToggle = GenerateUI.Toggle(
             GenerateUI.Row(content.transform),
@@ -132,13 +119,10 @@ public static class MainUI {
                 Core.Config.BlockInputWhenOpened = toggle;
                 Core.ConfigFile.RequestSave();
 
-                foreach (var patch in blockInputPatches) {
-                    if (patch is null) {
-                        continue;
-                    }
-                    if (toggle) patch.Apply();
-                    else patch.Remove();
-                }
+                ApplyState(SafePatchController.Get<SP_BlockAsyncInput>(), toggle);
+                ApplyState(SafePatchController.Get<SP_BlockLegacyInput>(), toggle);
+                ApplyState(SafePatchController.Get<SP_BlockInputMethod>(), toggle);
+                ApplyState(SafePatchController.Get<SP_BlockDirectInput>(), toggle);
             },
             "Block Input When Opened",
             "block_input_when_opened"
@@ -152,7 +136,6 @@ public static class MainUI {
             Core.Tr
         );
 
-        var spSaj = SafePatchController.Get<SP_ShowAutoJudgment>();
         UIToggle showAutoJudgmentToggle = GenerateUI.Toggle(
             GenerateUI.Row(content.transform),
             defSet.ShowAutoplayJudgment,
@@ -161,11 +144,7 @@ public static class MainUI {
                 Core.Config.ShowAutoplayJudgment = toggle;
                 Core.ConfigFile.RequestSave();
 
-                if (toggle) {
-                    spSaj?.Apply();
-                } else {
-                    spSaj?.Remove();
-                }
+                ApplyState(SafePatchController.Get<SP_ShowAutoJudgment>(), toggle);
             },
             "Show Autoplay Judgment",
             "show_autoplay_judgment"
@@ -199,5 +178,13 @@ public static class MainUI {
             "Hides in-game level titles using GCS setting",
             Core.Tr
         );
+        return;
+
+        static void ApplyState<T>(T[] patches, bool enable) where T : SafeConditionalPatch {
+            foreach (var patch in patches) {
+                if (enable) patch.Apply();
+                else patch.Remove();
+            }
+        }
     }
 }

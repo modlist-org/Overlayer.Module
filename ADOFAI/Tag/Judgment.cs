@@ -23,9 +23,10 @@ public static class Judgment {
     [Tag(Desc = "Very early and very late judgments.")] public static int V => VE + VL;
     [Tag(Desc = "Too early and too late judgments.")] public static int T => TE + TL;
     [Tag(Desc = "Number of Misses")]  public static int Miss => CurrentCount(HitMargin.FailMiss);
-    [Tag(Desc = "Number of Overloads")] public static int Overload => CurrentCount(HitMargin.OverPress);
-    [Tag(Desc = "MissCount + Overloads")] public static int Fail => Miss + Overload;
+    [Tag(Desc = "Number of Overloads")] public static int Overload => CurrentCount(HitMargin.FailOverload);
+    [Tag(Desc = "MissCount + Overloads")] public static int Fail => Tracker?.GetDeaths() ?? 0;
     [Tag(Desc = "Number of Multipresses")] public static int Multipress => CurrentCount(HitMargin.Multipress);
+    [Tag(Desc = "Number of OverPress")] public static int OverPress => CurrentCount(HitMargin.OverPress); 
 
     private static int CurrentCount(HitMargin margin) => Tracker?.GetHits(margin) ?? 0;
 }

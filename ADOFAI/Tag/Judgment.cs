@@ -1,6 +1,7 @@
 using Overlayer.Tag.Core;
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace Overlayer.Module.ADOFAI.Tag;
 
@@ -21,6 +22,10 @@ public static class Judgment {
     [Tag(Desc = "Early and late perfect judgments.")] public static int ELP => EP + LP;
     [Tag(Desc = "Very early and very late judgments.")] public static int V => VE + VL;
     [Tag(Desc = "Too early and too late judgments.")] public static int T => TE + TL;
+    [Tag(Desc = "Number of Misses")]  public static int Miss => CurrentCount(HitMargin.FailMiss);
+    [Tag(Desc = "Number of Overloads")] public static int Overload => CurrentCount(HitMargin.OverPress);
+    [Tag(Desc = "MissCount + Overloads")] public static int Fail => Miss + Overload;
+    [Tag(Desc = "Number of Multipresses")] public static int Multipress => CurrentCount(HitMargin.Multipress);
 
     private static int CurrentCount(HitMargin margin) => Tracker?.GetHits(margin) ?? 0;
 }

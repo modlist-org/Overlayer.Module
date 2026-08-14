@@ -40,9 +40,19 @@ public class Core : OverlayerModule {
 
     public static bool IsPlaying {
         get {
-            var ctrl = scrController.instance;
             var cdt = scrConductor.instance;
-            return ctrl is not null && cdt is not null && !ctrl.paused && cdt.isGameWorld;
+            var ctrl = scrController.instance;
+            var edt = scnEditor.instance;
+
+            if (cdt == null || !cdt.isGameWorld) {
+                return false;
+            }
+
+            if (ctrl == null) {
+                return false;
+            }
+
+            return !ctrl.paused || (edt != null && edt.pausedInPlayMode);
         }
     }
 

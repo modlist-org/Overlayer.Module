@@ -101,6 +101,13 @@ public class Core : OverlayerModule {
         SafePatchController.Add(new SP_RecordTiming());
         SafePatchController.ApplyAll();
 
+        MainCore.Cam.CustomCameraProvider = () => {
+            if (scrCamera.instance != null && scrCamera.instance.camobj != null) {
+                return scrCamera.instance.camobj;
+            }
+            return null;
+        };
+
         MainUI.CreateInputBlocker(UICore.CanvasObj.transform);
         MainUI.CreateMenu(UICore.MenuContent);
         MainUI.CreatePage(PageFactory.CreatePageBase(100));

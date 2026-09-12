@@ -2,9 +2,7 @@ using ADOFAI;
 using Overlayer.Tag.Core;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using UnityEngine;
 
 namespace Overlayer.Module.ADOFAI.Tag;
 
@@ -17,8 +15,9 @@ public static class Gameplay {
     [Tag] public static double Accuracy => Percent(Tracker?.percentAcc);
     [Tag] public static double XAccuracy => Percent(Tracker?.percentXAcc);
 
-    public static int ScoreValue => Score(Tracker?.hitMargins);
-    [Tag(Name = "Score")] public static int ScoreTag => ScoreValue;
+    [Tag] public static int XScore => Tracker?.xScore ?? 0;
+    [Tag] public static int MaxXScore => Tracker?.maxXScore ?? 0;
+    [Tag] public static int LastXScore => Tracker?.lastXScore ?? 0;
 
     [Tag] public static double Progress => (Controller?.percentComplete ?? 0f) * 100d;
     [Tag] public static double StartProgress => TotalTile == 0 ? 0 : StartTile * 100d / TotalTile;
@@ -100,12 +99,6 @@ public static class Gameplay {
 
     private static double Percent(float? value) => value.HasValue && !float.IsNaN(value.Value) ? value.Value * 100d : 0;
     private static string Strip(string? value) => string.IsNullOrEmpty(value) ? string.Empty : RDUtils.RemoveRichTags(value);
-    private static int Score(IEnumerable<HitMargin>? margins) => margins?.Sum(margin => margin switch {
-        HitMargin.Perfect or HitMargin.Auto => 300,
-        HitMargin.EarlyPerfect or HitMargin.LatePerfect => 150,
-        HitMargin.VeryEarly or HitMargin.VeryLate => 91,
-        _ => 0
-    }) ?? 0;
 }
 
 internal static class GameplayState {

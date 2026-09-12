@@ -1,32 +1,38 @@
 using Overlayer.Tag.Core;
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 
 namespace Overlayer.Module.ADOFAI.Tag;
 
 public static class Judgment {
     private static scrMarginTracker? Tracker => scrController.instance?.playerOne?.marginTracker;
+    [Tag(Desc = "Too Early")]     public static int TE => CurrentCount(HitMargin.TooEarly);
+    [Tag(Desc = "Very Early")]    public static int VE => CurrentCount(HitMargin.VeryEarly);
+    [Tag(Desc = "Early Perfect")] public static int EP => CurrentCount(HitMargin.EarlyPerfect);
+    [Tag(Desc = "Perfect Minus")] public static int PM => CurrentCount(HitMargin.PerfectMinus);
+    [Tag(Desc = "XPerfect")]      public static int XP => CurrentCount(HitMargin.XPerfect) + A;
+    [Tag(Desc = "Perfect Plus")]  public static int PP => CurrentCount(HitMargin.PerfectPlus);
+    [Tag(Desc = "Late Perfect")]  public static int LP => CurrentCount(HitMargin.LatePerfect);
+    [Tag(Desc = "Very Late")]     public static int VL => CurrentCount(HitMargin.VeryLate);
+    [Tag(Desc = "Too Late")]      public static int TL => CurrentCount(HitMargin.TooLate);
+        
+    [Tag(Desc = "Auto")]                           public static int A => CurrentCount(HitMargin.Auto);
+    [Tag(Desc = "Pure XPerfect (excluding Auto)")] public static int PXP => CurrentCount(HitMargin.XPerfect);
 
-    [Tag(Desc = "Too early judgments.")] public static int TE => CurrentCount(HitMargin.TooEarly);
-    [Tag(Desc = "Very early judgments.")] public static int VE => CurrentCount(HitMargin.VeryEarly);
-    [Tag(Desc = "Early perfect judgments.")] public static int EP => CurrentCount(HitMargin.EarlyPerfect);
-    [Tag(Desc = "Perfect judgments.")] public static int P => PP + A;
-    [Tag(Desc = "Late perfect judgments.")] public static int LP => CurrentCount(HitMargin.LatePerfect);
-    [Tag(Desc = "Very late judgments.")] public static int VL => CurrentCount(HitMargin.VeryLate);
-    [Tag(Desc = "Too late judgments.")] public static int TL => CurrentCount(HitMargin.TooLate);
-    [Tag(Desc = "Autoplay perfect judgments.")] public static int A => CurrentCount(HitMargin.Auto);
-    [Tag(Desc = "Player perfect judgments.")] public static int PP => CurrentCount(HitMargin.Perfect);
-    [Tag(Desc = "Fast judgments.")] public static int Fast => TE + VE + EP;
-    [Tag(Desc = "Slow judgments.")] public static int Slow => LP + VL + TL;
-    [Tag(Desc = "Early and late perfect judgments.")] public static int ELP => EP + LP;
-    [Tag(Desc = "Very early and very late judgments.")] public static int V => VE + VL;
-    [Tag(Desc = "Too early and too late judgments.")] public static int T => TE + TL;
-    [Tag(Desc = "Number of Misses")]  public static int Miss => CurrentCount(HitMargin.FailMiss);
-    [Tag(Desc = "Number of Overloads")] public static int Overload => CurrentCount(HitMargin.FailOverload);
-    [Tag(Desc = "MissCount + Overloads")] public static int Fail => Tracker?.GetDeaths() ?? 0;
+
+    [Tag(Desc = "Perfect (EP + PM + XP + PP + LP)")] public static int P => PM + XP + EP;
+    [Tag(Desc = "Fast (TE + VE + EP + PM)")]         public static int Fast => TE + VE + EP + PM;
+    [Tag(Desc = "Slow (PP + LP + VL + TL)")]         public static int Slow => PP + LP + VL + TL;
+    [Tag(Desc = "Inner Perfects (PM + PP)")]         public static int IP => PM + PP;
+    [Tag(Desc = "Outer Perfects (EP + LP)")]         public static int OP => EP + LP;
+    [Tag(Desc = "Very Early & Very Late (VE + VL)")] public static int V => VE + VL;
+    [Tag(Desc = "Too Early & Too Late (TE + TL)")]   public static int T => TE + TL;
+
+    [Tag(Desc = "Number of Misses")]       public static int Miss => CurrentCount(HitMargin.FailMiss);
+    [Tag(Desc = "Number of Overloads")]    public static int Overload => CurrentCount(HitMargin.FailOverload);
+    [Tag(Desc = "Total Deaths/Fails")]     public static int Fail => Tracker?.GetDeaths() ?? 0;
     [Tag(Desc = "Number of Multipresses")] public static int Multipress => CurrentCount(HitMargin.Multipress);
-    [Tag(Desc = "Number of OverPress")] public static int OverPress => CurrentCount(HitMargin.OverPress); 
+    [Tag(Desc = "Number of OverPress")]    public static int OverPress => CurrentCount(HitMargin.OverPress);
 
     private static int CurrentCount(HitMargin margin) => Tracker?.GetHits(margin) ?? 0;
 }
@@ -67,5 +73,5 @@ public static class Combo {
         return set.Contains;
     }
 
-    private static bool IsPerfect(HitMargin margin) => margin is HitMargin.Perfect or HitMargin.Auto;
+    private static bool IsPerfect(HitMargin margin) => margin is HitMargin.PerfectMinus or HitMargin.PerfectPlus or HitMargin.Auto;
 }

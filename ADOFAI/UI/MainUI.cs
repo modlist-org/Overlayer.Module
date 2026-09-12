@@ -165,7 +165,7 @@ public static class MainUI {
             "DESC_SHOW_AUTOPLAY_JUDGMENT",
             "Applies a patch to show the true judgment in AutoPlay on the Hit Error Meter",
             "ADV_DESC_SHOW_AUTOPLAY_JUDGMENT",
-            "Patches scrPlayer.Hit method using Transpiler.\n\nOriginal scrPlayer.Hit checks 'this.auto' field\nto force hit error meter values to 0.0f (Perfect)\nduring AutoPlay.\nThe Transpiler scans IL instructions for Ldarg_0\nfollowed by Ldfld 'auto' or Call 'get_auto',\nand replaces them with Ldc_I4_0 and Nop.\n\nThis forces the auto check to evaluate as false,\nallowing the Error Meter to process actual angle diffs\nand margin scales",
+            "Patches scrController.UpdateHitErrorMeter method using Transpiler.\n\nOriginal UpdateHitErrorMeter checks 'RDC.auto'\nto force hit error meter values to 0.0f (Perfect)\nduring AutoPlay.\nThe Transpiler scans IL instructions for Call 'RDC.get_auto',\nand replaces it with Ldc_I4_0.\n\nThis forces the auto check to evaluate as false,\nallowing the Error Meter to process actual angle diffs\nand margin scales",
             Core.Tr
         );
 

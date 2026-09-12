@@ -9,7 +9,7 @@ namespace Overlayer.Module.ADOFAI.Patch;
 public class SP_ShowAutoJudgment() : SafeConditionalPatch(nameof(SP_ShowAutoJudgment)) {
     protected override bool ShouldApply() => Core.Config.ShowAutoplayJudgment;
 
-    protected override MethodBase GetTargetMethod() => SafePatch.GetMethodSafe("scrPlayer", "Hit");
+    protected override MethodBase GetTargetMethod() => SafePatch.GetMethodSafe("scrController", "UpdateHitErrorMeter");
 
     protected override HarmonyMethod Transpiler() {
         return new HarmonyMethod(typeof(SP_ShowAutoJudgment)
@@ -18,28 +18,21 @@ public class SP_ShowAutoJudgment() : SafeConditionalPatch(nameof(SP_ShowAutoJudg
 
     private static IEnumerable<CodeInstruction> TranspilerImpl(IEnumerable<CodeInstruction> instructions) {
         var codes = new List<CodeInstruction>(instructions);
+        int patched = 0;
 
-        for(int i = 0; i < codes.Count - 1; i++) {
-            bool isAutoField =
-                codes[i].opcode == OpCodes.Ldarg_0 &&
-                i + 1 < codes.Count &&
-                codes[i + 1].opcode == OpCodes.Ldfld &&
-                codes[i + 1].operand is FieldInfo f &&
-                f.Name == "auto";
-
-            bool isAutoGetter =
-                codes[i].opcode == OpCodes.Ldarg_0 &&
-                i + 1 < codes.Count &&
-                codes[i + 1].opcode == OpCodes.Call &&
-                codes[i + 1].operand is MethodInfo m &&
-                m.Name.Contains("get_auto");
-
-            if(!isAutoField && !isAutoGetter) {
+        for(int i = 0; i < codes.Count; i++) {
+            if(codes[i].opcode != OpCodes.Call) {
                 continue;
             }
-
+            if(codes[i].operand is not MethodInfo m || m.Name != "get_auto" || m.DeclaringType?.Name != "RDC") {
+                continue;
+            }
             codes[i] = new CodeInstruction(OpCodes.Ldc_I4_0);
-            codes[i + 1] = new CodeInstruction(OpCodes.Nop);
+            patched++;
+        }
+
+        if(patched == 0) {
+            Core.Logger.Wrn($"[{nameof(SP_ShowAutoJudgment)}] No RDC.auto check found in scrController.UpdateHitErrorMeter. Patch did nothing.");
         }
 
         return codes;

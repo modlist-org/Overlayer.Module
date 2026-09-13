@@ -73,5 +73,5 @@ public static class Combo {
         return set.Contains;
     }
 
-    private static bool IsPerfect(HitMargin margin) => margin is HitMargin.PerfectMinus or HitMargin.PerfectPlus or HitMargin.Auto;
+    private static bool IsPerfect(HitMargin margin) => margin is HitMargin.PerfectMinus or HitMargin.PerfectPlus or HitMargin.XPerfect or HitMargin.Auto;
 }

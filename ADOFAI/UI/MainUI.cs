@@ -2,11 +2,12 @@ using Overlayer.Localization;
 using Overlayer.Module.ADOFAI.IO;
 using Overlayer.Module.ADOFAI.Patch;
 using Overlayer.Patch.Safe;
+using Overlayer.Core;
 using Overlayer.UI.Factory;
-using Overlayer.UI.Generator;
-using Overlayer.UI.Objects;
-using Overlayer.UI.Objects.Impl;
-using Overlayer.UI.Utility;
+using O5Kit.Behaviour;
+using O5Kit.Control;
+using O5Kit.Core;
+using O5Kit.Factory;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -37,7 +38,7 @@ public static class MainUI {
         => MenuFactory.CreateItem(parent, "ADOFAI", Core.Spr.Get("Image.ADOFAI.png"), 100)
         .label.gameObject.AddComponent<TextLocalization>().Init("ADOFAI", "ADOFAI", Core.Tr);
 
-    private static readonly Dictionary<string, UIObject> objects = [];
+    private static readonly Dictionary<string, O5Object> objects = [];
 
     public static void CreatePage(RectTransform parent) {
         GameObject pad = new("Pad");
@@ -87,13 +88,13 @@ public static class MainUI {
 
         ADOFAISettings defSet = new();
 
-        _ = GenerateUI.AddTextH1(GenerateUI.Row(content.transform))
+        _ = O5Factory.ControlTextH1(O5Factory.Row(content.transform))
            .gameObject.AddComponent<TextLocalization>()
            .Init("ADOFAI", "ADOFAI", Core.Tr);
 
         if (Application.platform == RuntimePlatform.LinuxPlayer) {
-            UIToggle linuxTextInputToggle = GenerateUI.Toggle(
-                GenerateUI.Row(content.transform),
+            O5Toggle linuxTextInputToggle = O5Factory.Toggle(
+                O5Factory.Row(content.transform),
                 defSet.LinuxTextInputFix,
                 Core.Config.LinuxTextInputFix,
                 toggle => {
@@ -106,20 +107,14 @@ public static class MainUI {
                 "Linux Text Input Fix",
                 "linux_text_input_fix"
             );
-            linuxTextInputToggle.OnlyModOn = true;
+            linuxTextInputToggle.EnabledWhen = () => MainCore.IsModEnabled;
             linuxTextInputToggle.Label.gameObject.AddComponent<TextLocalization>().Init("LINUX_TEXT_INPUT_FIX", "Linux Text Input Fix", Core.Tr);
             objects[linuxTextInputToggle.Id] = linuxTextInputToggle;
-            linuxTextInputToggle.Rect.AddToolTipWithAdv(
-                "DESC_LINUX_TEXT_INPUT_FIX",
-                "Fixes duplicate characters and Shift-modified text input on Linux",
-                "ADV_DESC_LINUX_TEXT_INPUT_FIX",
-                "Prevents Linux Unity builds from double-processing input caused\nby OS text events and physical key events firing simultaneously.\n\nThe Process method tracks frame counts and pending states to\npass only the first arriving event of a pair while dropping duplicates.\n\nIt also resolves corrupted Shift and CapsLock inputs\nby analyzing key codes and modifier states via bitwise operations to recalculate the exact ASCII characters.",
-                Core.Tr
-            );;
+            linuxTextInputToggle.Rect.AddToolTip(() => TooltipText("DESC_LINUX_TEXT_INPUT_FIX", "Fixes duplicate characters and Shift-modified text input on Linux", "ADV_DESC_LINUX_TEXT_INPUT_FIX", "Prevents Linux Unity builds from double-processing input caused\nby OS text events and physical key events firing simultaneously.\n\nThe Process method tracks frame counts and pending states to\npass only the first arriving event of a pair while dropping duplicates.\n\nIt also resolves corrupted Shift and CapsLock inputs\nby analyzing key codes and modifier states via bitwise operations to recalculate the exact ASCII characters."));
         }
 
-        UIToggle blockInputToggle = GenerateUI.Toggle(
-            GenerateUI.Row(content.transform),
+        O5Toggle blockInputToggle = O5Factory.Toggle(
+            O5Factory.Row(content.transform),
             defSet.BlockInputWhenOpened,
             Core.Config.BlockInputWhenOpened,
             toggle => {
@@ -134,19 +129,13 @@ public static class MainUI {
             "Block Input When Opened",
             "block_input_when_opened"
         );
-        blockInputToggle.OnlyModOn = true;
+        blockInputToggle.EnabledWhen = () => MainCore.IsModEnabled;
         blockInputToggle.Label.gameObject.AddComponent<TextLocalization>().Init("BLOCK_INPUT_WHEN_OPENED", "Block Input When Opened", Core.Tr);
         objects[blockInputToggle.Id] = blockInputToggle;
-        blockInputToggle.Rect.AddToolTipWithAdv(
-            "DESC_BLOCK_INPUT_WHEN_OPENED",
-            "Blocks game inputs while the Overlayer UI is opened",
-            "ADV_DESC_BLOCK_INPUT_WHEN_OPENED",
-            "Hooks into ADOFAI's input architecture across 4 distinct layers:\n\n1. Async Input: Patches scrPlayer.ValidInputWasTriggered and clears key masks in AsyncInputManager.\n2. Legacy Input: Patches RDInputType_Keyboard.CheckKeyState to block editing and mouse input.\n3. Input Method: Intercepts OptionsPanelsCLS.CheckInputs to suppress menu input events.\n4. Direct Input: Uses Transpiler on level select Update methods to redirect UnityEngine.Input calls to custom wrappers.\n\nAlso creates a full-screen Raycast target (EmptyGraphic) behind the UI to block UI-level interactions",
-            Core.Tr
-        );
+        blockInputToggle.Rect.AddToolTip(() => TooltipText("DESC_BLOCK_INPUT_WHEN_OPENED", "Blocks game inputs while the Overlayer UI is opened", "ADV_DESC_BLOCK_INPUT_WHEN_OPENED", "Hooks into ADOFAI's input architecture across 4 distinct layers:\n\n1. Async Input: Patches scrPlayer.ValidInputWasTriggered and clears key masks in AsyncInputManager.\n2. Legacy Input: Patches RDInputType_Keyboard.CheckKeyState to block editing and mouse input.\n3. Input Method: Intercepts OptionsPanelsCLS.CheckInputs to suppress menu input events.\n4. Direct Input: Uses Transpiler on level select Update methods to redirect UnityEngine.Input calls to custom wrappers.\n\nAlso creates a full-screen Raycast target (EmptyGraphic) behind the UI to block UI-level interactions"));
 
-        UIToggle showAutoJudgmentToggle = GenerateUI.Toggle(
-            GenerateUI.Row(content.transform),
+        O5Toggle showAutoJudgmentToggle = O5Factory.Toggle(
+            O5Factory.Row(content.transform),
             defSet.ShowAutoplayJudgment,
             Core.Config.ShowAutoplayJudgment,
             toggle => {
@@ -158,19 +147,13 @@ public static class MainUI {
             "Show Autoplay Judgment",
             "show_autoplay_judgment"
         );
-        showAutoJudgmentToggle.OnlyModOn = true;
+        showAutoJudgmentToggle.EnabledWhen = () => MainCore.IsModEnabled;
         showAutoJudgmentToggle.Label.gameObject.AddComponent<TextLocalization>().Init("SHOW_AUTOPLAY_JUDGMENT", "Show Autoplay Judgment", Core.Tr);
         objects[showAutoJudgmentToggle.Id] = showAutoJudgmentToggle;
-        showAutoJudgmentToggle.Rect.AddToolTipWithAdv(
-            "DESC_SHOW_AUTOPLAY_JUDGMENT",
-            "Applies a patch to show the true judgment in AutoPlay on the Hit Error Meter",
-            "ADV_DESC_SHOW_AUTOPLAY_JUDGMENT",
-            "Patches scrController.UpdateHitErrorMeter method using Transpiler.\n\nOriginal UpdateHitErrorMeter checks 'RDC.auto'\nto force hit error meter values to 0.0f (Perfect)\nduring AutoPlay.\nThe Transpiler scans IL instructions for Call 'RDC.get_auto',\nand replaces it with Ldc_I4_0.\n\nThis forces the auto check to evaluate as false,\nallowing the Error Meter to process actual angle diffs\nand margin scales",
-            Core.Tr
-        );
+        showAutoJudgmentToggle.Rect.AddToolTip(() => TooltipText("DESC_SHOW_AUTOPLAY_JUDGMENT", "Applies a patch to show the true judgment in AutoPlay on the Hit Error Meter", "ADV_DESC_SHOW_AUTOPLAY_JUDGMENT", "Patches scrController.UpdateHitErrorMeter method using Transpiler.\n\nOriginal UpdateHitErrorMeter checks 'RDC.auto'\nto force hit error meter values to 0.0f (Perfect)\nduring AutoPlay.\nThe Transpiler scans IL instructions for Call 'RDC.get_auto',\nand replaces it with Ldc_I4_0.\n\nThis forces the auto check to evaluate as false,\nallowing the Error Meter to process actual angle diffs\nand margin scales"));
 
-        UIToggle hideTitleToggle = GenerateUI.Toggle(
-            GenerateUI.Row(content.transform),
+        O5Toggle hideTitleToggle = O5Factory.Toggle(
+            O5Factory.Row(content.transform),
             defSet.HideTitle,
             Core.Config.HideTitle,
             toggle => {
@@ -181,16 +164,10 @@ public static class MainUI {
             "Hide Title",
             "hide_title"
         );
-        hideTitleToggle.OnlyModOn = true;
+        hideTitleToggle.EnabledWhen = () => MainCore.IsModEnabled;
         hideTitleToggle.Label.gameObject.AddComponent<TextLocalization>().Init("HIDE_TITLE", "Hide Title", Core.Tr);
         objects[hideTitleToggle.Id] = hideTitleToggle;
-        hideTitleToggle.Rect.AddToolTipWithAdv(
-            "DESC_HIDE_TITLE",
-            "Hides in-game level titles using GCS setting",
-            "ADV_DESC_HIDE_TITLE",
-            "Controls the unused static flag 'GCS.d_dontShowTitles' in game memory.\n\nADOFAI's codebase contains logic that reads 'd_dontShowTitles' to hide level titles during gameplay,\nbut the game never assigns a value to this field anywhere.\n\nThis option exposes control over that field directly,\nenabling native title hiding without needing additional patches",
-            Core.Tr
-        );
+        hideTitleToggle.Rect.AddToolTip(() => TooltipText("DESC_HIDE_TITLE", "Hides in-game level titles using GCS setting", "ADV_DESC_HIDE_TITLE", "Controls the unused static flag 'GCS.d_dontShowTitles' in game memory.\n\nADOFAI's codebase contains logic that reads 'd_dontShowTitles' to hide level titles during gameplay,\nbut the game never assigns a value to this field anywhere.\n\nThis option exposes control over that field directly,\nenabling native title hiding without needing additional patches"));
         return;
 
         static void ApplyState<T>(T[] patches, bool enable) where T : SafeConditionalPatch {
@@ -200,6 +177,11 @@ public static class MainUI {
             }
         }
     }
+
+    private static string TooltipText(string key, string def, string advKey, string advDef)
+        => MainCore.Conf.AdvancedTooltip
+            ? $"{Core.Tr.Get(key, def)}\n--\n{Core.Tr.Get(advKey, advDef)}"
+            : Core.Tr.Get(key, def);
 
     private static void UpdateInputBlockerState(bool enable) {
         if (_inputBlockerObject != null) {

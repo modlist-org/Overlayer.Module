@@ -1,7 +1,7 @@
 using HarmonyLib;
 using Overlayer.Patch.Safe;
 using Overlayer.UI;
-using Overlayer.UI.Objects;
+using O5Kit.Control;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
@@ -18,7 +18,7 @@ public sealed class SP_BlockLegacyInput() : SafeConditionalPatch(nameof(SP_Block
         .GetMethod(nameof(PrefixImpl), BindingFlags.Static | BindingFlags.NonPublic));
 
     private static bool PrefixImpl(KeyCode key, ref bool __result) {
-        if(!InputBlocker.IsOpen || (!UIInputBlocker.IsEditing && !IsMouseButton(key))) return true;
+        if(!InputBlocker.IsOpen || (!O5InputBlocker.IsEditing && !IsMouseButton(key))) return true;
         __result = false;
         return false;
     }

@@ -9,6 +9,20 @@
         <LangVersion>latest</LangVersion>
         <OverlayerPath Condition="'$(OverlayerPath)' == ''">../../Overlayer/Overlayer</OverlayerPath>
     </PropertyGroup>
+
+    <PropertyGroup>
+        <!-- O5Kit (UI + input toolkit). Module is Mono-only: Debug/Release map to O5Kit *_Mono. -->
+        <O5KitProject>$(MSBuildProjectDirectory)/../../O5Kit/src/O5Kit/O5Kit.csproj</O5KitProject>
+        <O5KitConfiguration Condition="$(Configuration.Contains('Debug'))">Debug_Mono</O5KitConfiguration>
+        <O5KitConfiguration Condition="!$(Configuration.Contains('Debug'))">Release_Mono</O5KitConfiguration>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="$(O5KitProject)">
+            <SetConfiguration>Configuration=$(O5KitConfiguration)</SetConfiguration>
+            <SetTargetFramework>TargetFramework=netstandard2.1</SetTargetFramework>
+        </ProjectReference>
+    </ItemGroup>
 	
     <ItemGroup>
 		<Reference Include="Overlayer" HintPath="$(OverlayerPath)/bin/Release_ML/netstandard2.1/Overlayer.dll" />
@@ -148,6 +162,7 @@
 	<Target Name="PostBuild" AfterTargets="Build" Condition="'$(SkipPostBuild)' != 'true'">
         <MakeDir Directories="$(GamePath)/UserLibs" Condition="'$(TargetPath)' != ''" />
         <Copy Condition="'$(TargetPath)' != ''" SourceFiles="$(TargetPath)" DestinationFolder="$(GamePath)/UserLibs" SkipUnchangedFiles="true" />
+        <Copy SourceFiles="$(TargetDir)O5Kit.dll" DestinationFolder="$(GamePath)/UserLibs" SkipUnchangedFiles="true" Condition="Exists('$(TargetDir)O5Kit.dll')" />
 
 		<ItemGroup>
 			<ExportFiles Include="Resource/Export/**/*.*" />
@@ -163,6 +178,7 @@
         </PropertyGroup>
         <MakeDir Directories="$(BuildOutputDir)\UserLibs" Condition="'$(TargetPath)' != ''" />
         <Copy Condition="'$(TargetPath)' != ''" SourceFiles="$(TargetPath)" DestinationFolder="$(BuildOutputDir)\UserLibs" SkipUnchangedFiles="true" />
+        <Copy SourceFiles="$(TargetDir)O5Kit.dll" DestinationFolder="$(BuildOutputDir)\UserLibs" SkipUnchangedFiles="true" Condition="Exists('$(TargetDir)O5Kit.dll')" />
         <MakeDir Directories="$(BuildOutputDir)\UserData\Overlayer\Module\ADOFAI" />
         <Copy SourceFiles="@(ExportFiles)" DestinationFiles="@(ExportFiles->'$(BuildOutputDir)\UserData\Overlayer\Module\ADOFAI\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
     </Target>
